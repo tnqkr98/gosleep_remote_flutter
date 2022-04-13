@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SleepMainWidget extends StatefulWidget{
   @override
@@ -16,6 +17,22 @@ class _SleepMainWidget extends State<SleepMainWidget>{
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter
           )
+        ),
+        child: Center(
+          child:Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text('hi'),
+              Text('hi'),
+              Text('hd'),
+              Text('hi'),
+              SvgPicture.asset(
+                'assets/images/ic_logo_40.svg',
+                width: 40,
+                height: 40
+              ),
+            ],
+          ),
         ),
       ),
     );
