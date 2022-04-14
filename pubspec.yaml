@@ -27,3 +27,18 @@ flutter:
     - assets/
     - assets/fonts/
     - assets/images/
+
+  fonts:
+    - family: SpoqaHanSansNeo
+      fonts:
+        - asset: assets/fonts/SpoqaHanSansNeo-Bold.ttf
+        - asset: assets/fonts/SpoqaHanSansNeo-Light.ttf
+        - asset: assets/fonts/SpoqaHanSansNeo-Medium.ttf
+        - asset: assets/fonts/SpoqaHanSansNeo-Regular.ttf
+        - asset: assets/fonts/SpoqaHanSansNeo-Thin.ttf
+    - family: Roboto_Regular
+      fonts:
+        - asset: assets/fonts/roboto_bold.ttf
+    - family: Pacifico
+      fonts:
+        - asset: assets/fonts/Pacifico-Regular.ttf
