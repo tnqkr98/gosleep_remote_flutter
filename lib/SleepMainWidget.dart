@@ -58,7 +58,7 @@ class _GosleepTitle extends State<GosleepTitle> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                Divider(height: 10,),
+                Divider(height: 10,color: Color(0x00000000),),
                 Text('   1.0.6', style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontFamily: "Roboto_Regular",
