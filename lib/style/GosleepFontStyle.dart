@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'GosleepColorPalette.dart';
 
-class GosleepTextStyles {
+class GosleepFontStyles {
   static const title1Bold_KOR = TextStyle(
       fontWeight: FontWeight.w700,
       fontFamily: "SpoqaHanSansNeo",

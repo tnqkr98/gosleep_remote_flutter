@@ -14,7 +14,6 @@ class SleepMainWidget extends StatefulWidget{
 class _SleepMainWidget extends State<SleepMainWidget>{
   @override
   void initState() {
-
   }
 
   @override
@@ -29,15 +28,48 @@ class _SleepMainWidget extends State<SleepMainWidget>{
           )
         ),
         child: Center(
-          child:Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: const <Widget>[
-              GosleepTitle(),
-              GosleepBody()
-            ],
-          ),
+          child:Stack(
+            children:[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: const <Widget>[
+                  GosleepTitle(),
+                  GosleepBody()
+                ],
+              ),
+              Positioned(
+                bottom: 30,
+                width: MediaQuery.of(context).size.width,
+                child: Center(
+                  child:Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 55,
+                    padding: const EdgeInsets.only(right: 25,left:25),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+                          return GosleepColors.gray_80;
+                        }),
+                      ),
+                      child: const Text(
+                        '고슬립을 활성화 중입니다..',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontFamily: "SpoqaHanSansNeo",
+                            fontStyle:  FontStyle.normal,
+                            fontSize: 18.0,
+                            color: GosleepColors.yellow_70
+                        )),
+                    ),
+                  )
+                )
+              )
+            ]
+          )
         ),
       ),
+      //floatingActionButton:
     );
   }
 }
@@ -50,6 +82,8 @@ class GosleepTitle extends StatefulWidget{
 }
 
 class _GosleepTitle extends State<GosleepTitle> {
+  bool bleConnected = false;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -75,12 +109,21 @@ class _GosleepTitle extends State<GosleepTitle> {
               ],
             ),
           ),
-          SvgPicture.asset(
-            'assets/images/ic_logo_40.svg',
-            width: 40,
-            height: 40,
-            color: Colors.white,
-          )
+          Stack(
+            children: [
+              SvgPicture.asset(
+                'assets/images/ic_logo_40.svg',
+                width: 40,
+                height: 40,
+                color: Colors.white,
+              ),
+              Center(
+                child: CircularProgressIndicator(
+                  color: bleConnected == true ? Colors.transparent : GosleepColors.blue_20,
+                ),
+              )
+            ],
+          ),
         ],
       ),
     );
@@ -97,22 +140,21 @@ class GosleepBody extends StatefulWidget{
 class _GosleepBody extends State<GosleepBody> {
   var isAlarmOn = false;
 
-  int selectedAir = 0;
+  int selectedAir = 1;
   List<String> airList = ['강하게','보통','약하게'];
-  late List<Widget> airRadioList;
 
-  int selectedSound = 0;
+  int selectedSound = 2;
   List<String> soundList = ['4','3','2','1','0'];
-
 
   @override
   void initState() {
-    //for()
-    // TODO - 반복문으로 라디오 버튼 위젯 초기화 리팩토링.
+    super.initState();
+    // TODO selected 값 초기화 (sharedPreference)
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.only(top: 30,left: 20,right: 20),
       child: SingleChildScrollView(
@@ -121,7 +163,7 @@ class _GosleepBody extends State<GosleepBody> {
             Row(
               children: [
                 const Expanded(
-                    child:Text('바람과 빛으로 깨우기',style: GosleepTextStyles.title3Medium_KOR,)
+                    child:Text('바람과 빛으로 깨우기',style: GosleepFontStyles.title3Medium_KOR,)
                 ),
                 CupertinoSwitch(
                   activeColor: GosleepColors.yellow_70,
@@ -161,32 +203,18 @@ class _GosleepBody extends State<GosleepBody> {
               padding: const EdgeInsets.only(top: 30),
               child:Row(
                 children: const [
-                  Text('슬립 에어 세기',style: GosleepTextStyles.title3Medium_KOR,),
+                  Text('슬립 에어 세기',style: GosleepFontStyles.title3Medium_KOR,),
                 ],
               ) ,
             ),
             Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child:Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: customRadio(airList[0], 0),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: customRadio(airList[1], 1),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: customRadio(airList[2], 2),
-                      ),
-                    ),
+                  children: [for(int i=0;i<3;i++)
+                    Expanded(child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: customRadio1(airList[i], i),),
+                    )
                   ],
                 )
             ),
@@ -194,32 +222,18 @@ class _GosleepBody extends State<GosleepBody> {
               padding: const EdgeInsets.only(top: 30),
               child:Row(
                 children: const [
-                  Text('수면 음악 볼륨',style: GosleepTextStyles.title3Medium_KOR,),
+                  Text('수면 음악 볼륨',style: GosleepFontStyles.title3Medium_KOR,),
                 ],
               ) ,
             ),
             Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child:Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: customRadio(airList[0], 0),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: customRadio(airList[1], 1),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: customRadio(airList[2], 2),
-                      ),
-                    ),
+                  children: [for(int i=0;i<5;i++)
+                    Expanded(child: Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: customRadio2(soundList[i], i),),
+                    )
                   ],
                 )
             )
@@ -229,24 +243,68 @@ class _GosleepBody extends State<GosleepBody> {
     );
   }
 
-  Widget customRadio(String txt, int index){
-    return OutlineButton(
+  Widget customRadio1(String txt, int index){
+    return OutlinedButton(
       onPressed: () {
-          setState((){
-            selectedAir = index;
-          });
-        },
-      padding: const EdgeInsets.all(18),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      borderSide: BorderSide(color: selectedAir == index ? Colors.cyan : Colors.grey),
-      color: Colors.cyan,
-      child: Text(txt,
-          style: TextStyle(
-              color: selectedAir == index ? Colors.cyan : Colors.grey,
-              fontFamily: 'SpoqaHanSansNeo',
-              fontSize: 16
-          ),
+        setState((){
+          selectedAir = index;
+        });
+      },
+      child: Text(
+        txt,
+        style: const TextStyle(
+            color: GosleepColors.blue_40,
+            fontFamily: 'SpoqaHanSansNeo',
+            fontSize: 16
         ),
-      );
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+          return selectedAir == index ? GosleepColors.blue_10 : Colors.transparent;
+        }),
+        side:MaterialStateProperty.resolveWith((states) {
+          return const BorderSide(color: GosleepColors.blue_40, width: 1);
+        }),
+        padding: MaterialStateProperty.resolveWith<EdgeInsetsGeometry>((_) {
+          return const EdgeInsets.all(18);
+        }),
+        shape: MaterialStateProperty.resolveWith<OutlinedBorder>((_) {
+          return RoundedRectangleBorder(borderRadius: BorderRadius.circular(10));
+        }),
+      ),
+    );
+  }
+
+  Widget customRadio2(String txt, int index) {
+    return OutlinedButton(
+      onPressed: () {
+        setState(() {
+          selectedSound = index;
+        });
+      },
+      child: Text(
+        txt,
+        style: const TextStyle(
+            color: GosleepColors.blue_40,
+            fontFamily: 'SpoqaHanSansNeo',
+            fontSize: 16
+        ),
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+          return selectedSound == index ? GosleepColors.blue_10 : Colors.transparent;
+        }),
+        side: MaterialStateProperty.resolveWith((states) {
+          return const BorderSide(color: GosleepColors.blue_40, width: 1);
+        }),
+        padding: MaterialStateProperty.resolveWith<EdgeInsetsGeometry>((_) {
+          return const EdgeInsets.all(18);
+        }),
+        shape: MaterialStateProperty.resolveWith<OutlinedBorder>((_) {
+          return RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10));
+        }),
+      ),
+    );
   }
 }
