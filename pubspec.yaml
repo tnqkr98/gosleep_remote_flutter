@@ -11,7 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^0.19.3
+  flutter_svg: ^1.0.3
+  flutter_blue:
+    git: https://github.com/espresso3389/flutter_blue
   cupertino_icons: ^1.0.2
 
 dev_dependencies:

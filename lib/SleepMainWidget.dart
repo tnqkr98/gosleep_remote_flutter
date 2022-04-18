@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'style/GosleepColorPalette.dart';
 import 'style/GosleepFontStyle.dart';
+import 'GosleepBleService.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SleepMainWidget extends StatefulWidget{
@@ -12,8 +13,12 @@ class SleepMainWidget extends StatefulWidget{
 }
 
 class _SleepMainWidget extends State<SleepMainWidget>{
+  GosleepBleService mBle = GosleepBleService();
+
   @override
   void initState() {
+    mBle.initBle();
+    mBle.startScan();
   }
 
   @override
