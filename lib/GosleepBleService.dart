@@ -1,8 +1,17 @@
 import 'dart:async';
 import 'dart:developer' as developer;
+import 'package:gosleep_remote_project/GosleepProvider.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 class GosleepBleService {     // Android의 서비스인 척. TODO - SingleTone
+
+  late BuildContext mContext;
+
+  GosleepBleService(BuildContext context){
+    mContext = context;
+  }
 
   FlutterBlue flutterBlue = FlutterBlue.instance;
 
@@ -12,7 +21,7 @@ class GosleepBleService {     // Android의 서비스인 척. TODO - SingleTone
   // State
   String targetDeviceName = 'gosleep';
   var gosleepDevice = null;
-  int connectionState = 0;      // 0 : 연결안됨, 1: 연결중, 2: 연결완료
+  int _connectionState = 0;      // 0 : 연결안됨, 1: 연결중, 2: 연결완료
 
   BluetoothDeviceState deviceState = BluetoothDeviceState.disconnected;   // 디바이스 연결 상태
   StreamSubscription<BluetoothDeviceState>? _stateListener;   // 디바이스와 연결 상태 구독하는 리스너 (화면 종료시 리스너 해제)
@@ -37,7 +46,7 @@ class GosleepBleService {     // Android의 서비스인 척. TODO - SingleTone
 
               developer.log('gosleep log',name: '고슬립 탐색 성공 : ' + element.device.id.toString());
               gosleepDevice = element.device;
-              connectionState = 1;
+              setBleConnectionState(1);
               connectGosleep();
               break;
             }
@@ -60,7 +69,23 @@ class GosleepBleService {     // Android의 서비스인 척. TODO - SingleTone
         if (deviceState == event) {
           return; // 상태가 동일하다면 무시
         }
-        setBleConnectionState(event);
+
+        switch (event) {
+          case BluetoothDeviceState.disconnected:
+            setBleConnectionState(0);
+            break;
+          case BluetoothDeviceState.disconnecting:
+            setBleConnectionState(1);
+            break;
+          case BluetoothDeviceState.connected:
+            setBleConnectionState(2);
+            break;
+          case BluetoothDeviceState.connecting:
+            setBleConnectionState(1);
+            break;
+        }
+        //이전 상태 이벤트 저장
+        deviceState = event;
       });
 
       connect();
@@ -69,7 +94,7 @@ class GosleepBleService {     // Android의 서비스인 척. TODO - SingleTone
 
   disconnectGosleep(){   // 화면 종료시 리스너 및 device 연결 해제
     try {
-      connectionState = 0;
+      setBleConnectionState(0);
       gosleepDevice.disconnect();
     }
     catch(e) {}
@@ -84,7 +109,8 @@ class GosleepBleService {     // Android의 서비스인 척. TODO - SingleTone
       returnValue = Future.value(false);
       developer.log('gosleep log',name: '고슬립 연결 실패 : timeout');
 
-      setBleConnectionState(BluetoothDeviceState.disconnected);
+      setBleConnectionState(0);
+      deviceState = BluetoothDeviceState.disconnected;
     }).then((data) {
       if (returnValue == null) {
         developer.log('gosleep log',name: '고슬립 연결 성공');
@@ -95,22 +121,8 @@ class GosleepBleService {     // Android의 서비스인 척. TODO - SingleTone
     return returnValue ?? Future.value(false);
   }
 
-  setBleConnectionState(BluetoothDeviceState event) {
-    switch (event) {
-      case BluetoothDeviceState.disconnected:
-        connectionState = 0;
-        break;
-      case BluetoothDeviceState.disconnecting:
-        connectionState = 1;
-        break;
-      case BluetoothDeviceState.connected:
-        connectionState = 2;
-        break;
-      case BluetoothDeviceState.connecting:
-        connectionState = 1;
-        break;
-    }
-    //이전 상태 이벤트 저장
-    deviceState = event;
+  setBleConnectionState(int _state) {
+    _connectionState = _state;
+    mContext.read<GosleepProvider>().changeState(_state);
   }
 }

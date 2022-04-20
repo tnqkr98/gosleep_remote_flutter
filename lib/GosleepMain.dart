@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:gosleep_remote_project/GosleepProvider.dart';
+import 'package:provider/provider.dart';
 import 'SleepMainWidget.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(MultiProvider(providers:[
+    ChangeNotifierProvider(create: (_)=> GosleepProvider())
+  ],
+  child: const MyApp(),));
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);

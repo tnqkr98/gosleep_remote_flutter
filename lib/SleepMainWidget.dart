@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:gosleep_remote_project/GosleepProvider.dart';
 import 'style/GosleepColorPalette.dart';
 import 'style/GosleepFontStyle.dart';
 import 'GosleepBleService.dart';
@@ -13,10 +15,11 @@ class SleepMainWidget extends StatefulWidget{
 }
 
 class _SleepMainWidget extends State<SleepMainWidget>{
-  GosleepBleService mBle = GosleepBleService();
+  late GosleepBleService mBle;
 
   @override
   void initState() {
+    mBle = GosleepBleService(context);
     mBle.initBle();
     mBle.startScan();
   }
@@ -54,18 +57,18 @@ class _SleepMainWidget extends State<SleepMainWidget>{
                       onPressed: () {},
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
-                          return GosleepColors.gray_80;
+                          return context.watch<GosleepProvider>().state == 2 ? GosleepColors.blue_40 :GosleepColors.gray_80;
                         }),
                       ),
-                      child: const Text(
-                        '고슬립을 활성화 중입니다..',
-                        style: TextStyle(
+                      child: Text(
+                          context.watch<GosleepProvider>().state == 2? '수면 모드 시작' :'고슬립을 활성화 중입니다..',
+                          style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontFamily: "SpoqaHanSansNeo",
                             fontStyle:  FontStyle.normal,
                             fontSize: 18.0,
                             color: GosleepColors.yellow_70
-                        )),
+                          )),
                     ),
                   )
                 )
@@ -74,7 +77,6 @@ class _SleepMainWidget extends State<SleepMainWidget>{
           )
         ),
       ),
-      //floatingActionButton:
     );
   }
 }
@@ -87,8 +89,6 @@ class GosleepTitle extends StatefulWidget{
 }
 
 class _GosleepTitle extends State<GosleepTitle> {
-  bool bleConnected = false;
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -124,7 +124,7 @@ class _GosleepTitle extends State<GosleepTitle> {
               ),
               Center(
                 child: CircularProgressIndicator(
-                  color: bleConnected == true ? Colors.transparent : GosleepColors.blue_20,
+                  color: context.watch<GosleepProvider>().state == 1 ? GosleepColors.blue_20 :Colors.transparent,
                 ),
               )
             ],
